@@ -1,89 +1,85 @@
 package net.cubiness;
 
-import java.awt.Point;
-import java.util.HashMap;
-
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 
+import net.cubiness.world.Location;
+import net.cubiness.world.board.tile.Tile;
+import net.cubiness.world.board.tile.base.Sand;
+import net.cubiness.world.board.tile.base.Stone;
+
 public class Render {
 	
-	private HashMap<Point, Integer> zVals = new HashMap<>();
-	private Texture tex;
-	public long window;
-	private int[] vertexbuffer = { 1 };
-	
 	public Render() {
-		GLFWErrorCallback.createPrint(System.err).set();
-		if ( !GLFW.glfwInit() ) {
-			throw new IllegalStateException("Unable to initialize GLFW");
-		}
-		GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, 4);
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
-		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, 1); // To make MacOS happy; should not be needed
-		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
-		window = GLFW.glfwCreateWindow(Main.WIDTH, Main.HEIGHT, "Hello World!", 0, 0);
-		if ( window == 0 ) {
-			throw new RuntimeException("Failed to create the GLFW window");
-		}
-		GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE )
-				GLFW.glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-		});
-		GLFW.glfwMakeContextCurrent(window);
-		GLFW.glfwSwapInterval(1);
-		GL.createCapabilities();
-		GLFW.glfwSetInputMode(window, GLFW.GLFW_STICKY_KEYS, 1);
-		init();
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+		GL11.glEnable(GL11.GL_NORMALIZE);
+		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_DST_COLOR);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDepthMask(false);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
-	private void init() {
-		//float vertices[] = {
-		//	100f,  200f, // Vertex 1 (X, Y)
-		//	200f,  0f, // Vertex 2 (X, Y)
-		//	0f, 0f  // Vertex 3 (X, Y)
-		//};
-		//GL15.glGenBuffers( vertexbuffer );
-		//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexbuffer[0]);
-		//GL15.glBufferData(vertexbuffer[0], vertices, GL15.GL_STATIC_DRAW);
-		
-	}
-
-	private void renderStrip(int y) {
-		//GL20.glEnableVertexAttribArray(0);
-		//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexbuffer[0]);
-		//GL20.glVertexAttribPointer(
-		//   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		//  3,                  // size
-		//   GL11.GL_FLOAT,           // type
-		//   false,           // normalized?
-		//   0,                  // stride
-		//   0            // array buffer offset
-		//);
-		// Draw the triangle !
-		//GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		//GL20.glDisableVertexAttribArray(0);
-		
+	private static void renderImage(Texture t, Location l, boolean flipped) {
+		GL11.glPushMatrix();
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, t.getTextureID());
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		int xRes = Display.getWidth() / Main.TILE_WIDTH;
+		int yRes = Display.getHeight() / Main.TILE_HEIGHT;
+		int a;
+		int b;
+		if (flipped) {
+			a = 1;
+			b = 0;
+		} else {
+			a = 0;
+			b = 1;
+		}
 		GL11.glBegin(GL11.GL_QUADS);
 		
-		GL11.glVertex2i(100, 100);
-		GL11.glVertex2i(200, 100);
-		GL11.glVertex2i(200, 200);
-		GL11.glVertex2i(100, 200);
+		GL11.glTexCoord2f(a, 0); GL11.glVertex2f(l.getX() * xRes,        l.getY() * yRes       );
+		GL11.glTexCoord2f(a, 1); GL11.glVertex2f(l.getX() * xRes,        l.getY() * yRes + yRes);
+		GL11.glTexCoord2f(b, 1); GL11.glVertex2f(l.getX() * xRes + xRes, l.getY() * yRes + yRes);
+		GL11.glTexCoord2f(b, 0); GL11.glVertex2f(l.getX() * xRes + xRes, l.getY() * yRes       );
 		
-		GL11.glEnd();
+    	GL11.glEnd();
+    	GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glPopMatrix();
 	}
-	
+
 	public void render() {
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		renderStrip(100);
-		GLFW.glfwSwapBuffers(window);
-		GLFW.glfwPollEvents();
-		//renderStrip(200);
+		if (Display.wasResized()) {
+			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GL11.glLoadIdentity();
+			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+			GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		}
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		GL11.glColor3f(0f, .3f, .6f);
+		GL11.glRecti(0, 0, Display.getWidth(), Display.getHeight());
+		GL11.glColor3f(1f, 1f, 1f);
+		//Main.b.getGrid().getGrid().forEach((l, t) -> {
+		Tile t = new Sand(new Location(1, 1));
+		renderImage(t.getTexture(), t.getLocation(), false);
+		t = new Stone(new Location(1, 0));
+		renderImage(t.getTexture(), t.getLocation(), false);
+		t = new Stone(new Location(0, 1));
+		renderImage(t.getTexture(), t.getLocation(), false);
+		//});
+		//for (Enemy e : Main.b.getEnemies()) {
+		//	renderImage(e.getTex(), e.getLocation(), e.needsFlip());
+		//}
+		//renderImage(Main.b.getPlayer1().getTex(), Main.b.getPlayer1().getLocation(), Main.b.getPlayer1().needsFlip());
+		//if (!Main.b.getPlayer1().isAlive()) {
+		//	
+		//}
 	}
 
 }

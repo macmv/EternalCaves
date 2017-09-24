@@ -1,36 +1,42 @@
 package net.cubiness;
 
-import org.lwjgl.Version;
-import org.lwjgl.glfw.Callbacks;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+
+import net.cubiness.world.board.Board;
 
 public class Main {
 
 	// The window handle
-	public static int WIDTH = 680;
-	public static int HEIGHT = 460;
-	private static Render r;
-
-	private static void init() {
-		r = new Render();
-	}
-
-	private static void loop() {
-		while (!GLFW.glfwWindowShouldClose(r.window) && GLFW.glfwGetKey(r.window, GLFW.GLFW_KEY_ESCAPE ) != GLFW.GLFW_PRESS) {
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-			r.render();
-		}
-	}
+	public static int WIDTH = 1280;
+	public static int HEIGHT = 720;
+	public static int TILE_WIDTH = 48;
+	public static int TILE_HEIGHT = 27;
+	public static Board b;
 
 	public static void main(String[] args) {
-		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-		init();
-		loop();
-		Callbacks.glfwFreeCallbacks(r.window);
-		GLFW.glfwDestroyWindow(r.window);
-		GLFW.glfwTerminate();
-		GLFW.glfwSetErrorCallback(null).free();
-	}	
+		try {
+            Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+            Display.setTitle("Bit Platformer");
+            Display.create();
+            Display.setResizable(true);
+        } catch (LWJGLException e) {
+            System.err.println("Display wasn't initialized correctly.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+        Render r = new Render();
+		b = new Board();
+        while (!Display.isCloseRequested()) {
+        	r.render();
+        	b.update();
+        	Display.update();
+        	Display.sync(60);
+        }
+ 
+        Display.destroy();
+        System.exit(0);
+	} 	
 
 }
