@@ -10,7 +10,12 @@ import org.newdawn.slick.opengl.TextureLoader;
 public enum TextureFile {
 	AIR("res/air.png"),
 	STONE("res/stone.png"),
-	SAND("res/sand.png");
+	SAND("res/sand.png"),
+	SANDSTONE("res/sandstone.png"),
+	//COAL("res/coal.png"),
+	//IRON("res/iron.png"),
+	//BAUXITE("res/bauxite.png"),
+	;
 	
 	private final Texture tx;
 	

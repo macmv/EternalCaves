@@ -1,4 +1,4 @@
-package net.cubiness.world.board.tile.air;
+package net.cubiness.tile.types.air;
 
 public enum AirType {
 	

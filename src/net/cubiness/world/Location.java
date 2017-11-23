@@ -31,4 +31,38 @@ public class Location {
 		this.y = y;
 	}
 
+	public void setX(float x) {
+		this.x = x;
+	}
+	
+	public void setY(float y) {
+		this.y = y;
+	}
+
+	public Location round() {
+		return new Location((int) x, (int) y);
+	}
+	
+	public Location plus(Location other) {
+		return new Location(other.getX() + x, other.getY() + y);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj.getClass() == this.getClass()) {
+			if (((Location) obj).getX() == this.x && ((Location) obj).getY() == this.y) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+		//return super.hashCode();
+	}
+
 }
