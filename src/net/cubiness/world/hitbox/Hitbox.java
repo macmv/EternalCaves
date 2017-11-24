@@ -1,30 +1,39 @@
 package net.cubiness.world.hitbox;
 
+import java.util.ArrayList;
+
 import net.cubiness.world.Location;
 
 public class Hitbox {
 	
 	private Location loc;
-	private SubHitbox[] hitboxes;
-	
-	public Hitbox(Location loc, SubHitbox[] hitboxes) {
-		this.loc = loc;
+	private ArrayList<SubHitbox> hitboxes;
+
+	public Hitbox(ArrayList<SubHitbox> hitboxes) {
 		this.hitboxes = hitboxes;
 	}
-	
-	public SubHitbox[] getSubHitboxes() {
+
+	public ArrayList<SubHitbox> getSubHitboxes() {
 		return hitboxes;
 	}
 	
-	private boolean isTouching(Hitbox other) {
-		for(int i = 0; i < getSubHitboxes().length; i++) {
-			for(int j = 0; j < other.getSubHitboxes().length; j++) {
-				if (getSubHitboxes()[i].touching(other.getSubHitboxes()[j])) {
+	public boolean touching(Location otherLoc, Hitbox other) {
+		for(SubHitbox thisHitbox : hitboxes) {
+			for(SubHitbox otherHitbox : other.hitboxes) {
+				if (thisHitbox.touching(loc, otherLoc, otherHitbox)) {
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	public void setLocation(Location loc) {
+		this.loc = loc;
+	}
+	
+	public Location getLocation() {
+		return loc;
 	}
 	
 }

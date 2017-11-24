@@ -11,27 +11,31 @@ public class SubHitbox {
 		this.bottomRight = bottomRight;
 	}
 	
-	public boolean touching(SubHitbox other) {
-		// checkthis hitbox 
-		return (this.topLeft.getX() > other.getTopLeft().getX() &&
-		this.topLeft.getX() < other.getBottomRight().getX()) ||
-		(this.bottomRight.getX() > other.getTopLeft().getX() &&
-		this.bottomRight.getX() < other.getBottomRight().getX()) ||
-		// check other hitbox x
-		(other.topLeft.getX() > this.getTopLeft().getX() &&
-		other.topLeft.getX() < this.getBottomRight().getX()) ||
-		(other.bottomRight.getX() > this.getTopLeft().getX() &&
-		other.bottomRight.getX() < this.getBottomRight().getX()) &&
-		// check one this y
-		(this.topLeft.getY() > other.getTopLeft().getY() &&
-		this.topLeft.getY() < other.getBottomRight().getY()) ||
-		(this.bottomRight.getY() > other.getTopLeft().getY() &&
-		this.bottomRight.getY() < other.getBottomRight().getY()) ||
-		// check other hitbox y
-		(other.topLeft.getY() > this.getTopLeft().getY() &&
-		other.topLeft.getY() < this.getBottomRight().getY()) ||
-		(other.bottomRight.getY() > this.getTopLeft().getY() &&
-		other.bottomRight.getY() < this.getBottomRight().getY());
+	public boolean touching(Location loc, Location otherLoc, SubHitbox other) {
+		// check this hitbox 
+		Location tempTopLeft = topLeft.plus(loc);
+		Location tempBottomRight = bottomRight.plus(loc);
+		Location tempTopLeftOther = other.topLeft.plus(otherLoc);
+		Location tempBottomRightOther = other.bottomRight.plus(otherLoc);
+		return ((tempTopLeft.getX() >= tempTopLeftOther.getX() &&
+				tempTopLeft.getX() <= tempBottomRightOther.getX()) ||
+				(tempBottomRight.getX() >= tempTopLeftOther.getX() &&
+				tempBottomRight.getX() <= tempBottomRightOther.getX()) ||
+				// check other hitbox x
+				(tempTopLeftOther.getX() >= tempTopLeft.getX() &&
+				tempTopLeftOther.getX() <= tempBottomRight.getX()) ||
+				(tempBottomRightOther.getX() >= tempTopLeft.getX() &&
+				tempBottomRightOther.getX() <= tempBottomRight.getX())) &&
+				// check one this y
+				((tempTopLeft.getY() >= tempTopLeftOther.getY() &&
+				tempTopLeft.getY() <= other.getBottomRight().getY()) ||
+				(tempBottomRight.getY() >= tempTopLeftOther.getY() &&
+				tempBottomRight.getY() <= other.getBottomRight().getY()) ||
+				// check other hitbox y
+				(tempTopLeftOther.getY() >= tempTopLeft.getY() &&
+				tempTopLeftOther.getY() <= tempBottomRight.getY()) ||
+				(tempBottomRightOther.getY() >= tempTopLeft.getY() &&
+				tempBottomRightOther.getY() <= tempBottomRight.getY()));
 	}
 
 	public Location getTopLeft() {

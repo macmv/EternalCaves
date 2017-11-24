@@ -9,13 +9,13 @@ import net.cubiness.world.hitbox.Hitbox;
 
 public class Tile {
 	
-	protected Location l;
+	protected Location loc;
 	protected Biome biome;
 	protected Hitbox hitbox;
 	protected TileData type = null;
 	
 	public Tile(Location l, Material m) {
-		this.l = l;
+		this.loc = l;
 		try {
 			type = (TileData) Class.forName(m.getTileClassName()).newInstance();
 		} catch (InstantiationException e) {
@@ -29,10 +29,11 @@ public class Tile {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
+		type.setLocation(loc);
 	}
 	
 	public void render() {
-		type.render(l);
+		type.render(loc);
 	}
 	
 	public Texture getTexture() {
@@ -40,11 +41,15 @@ public class Tile {
 	}
 	
 	public Location getLocation() {
-		return l;
+		return loc;
 	}
 
 	public Material getMaterial() {
 		return type.getMaterial();
+	}
+	
+	public Hitbox getHitbox() {
+		return type.getHitbox();
 	}
 
 }

@@ -27,15 +27,16 @@ public class WorldBuilder {
 								   l.getY() + rand.nextInt(20) - 10),
 					  rand.nextInt(maxCircleSize - minCircleSize) + minCircleSize, material);
 			genCircle(new Location(l.getX() + rand.nextInt(20) - 10,
-					   l.getY() + rand.nextInt(20) - 10),
+					   			   l.getY() + rand.nextInt(20) - 10),
 					  rand.nextInt(maxCircleSize - minCircleSize) + minCircleSize, Material.AIR);
 			genCircle(new Location(l.getX() + rand.nextInt(20) - 10,
-					   l.getY() + rand.nextInt(20) - 10),
+					   			   l.getY() + rand.nextInt(20) - 10),
 					  (rand.nextInt(maxCircleSize - minCircleSize) + minCircleSize) / 2, Material.AIR);
 		}
 	}
 	
-	private void genCircle(Location l, int size, Material material) {
+	public void genCircle(Location l, int size, Material material) {
+		l = l.floor();
 		int biomeSize = 12;
 		for (int y = (int) l.getY() - biomeSize; y < l.getY() + biomeSize; y++) {
 			for (int x = (int) l.getX() - biomeSize; x < l.getX() + biomeSize; x++) {

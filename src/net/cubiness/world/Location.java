@@ -40,7 +40,7 @@ public class Location {
 	}
 
 	public Location round() {
-		return new Location((int) x, (int) y);
+		return new Location(Math.round(x), Math.round(y));
 	}
 	
 	public Location plus(Location other) {
@@ -63,6 +63,10 @@ public class Location {
 	public int hashCode() {
 		return 0;
 		//return super.hashCode();
+	}
+
+	public Location floor() {
+		return new Location((int) x, (int) y);
 	}
 
 }
